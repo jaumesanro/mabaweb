@@ -15,6 +15,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 
@@ -34,7 +37,7 @@
                     },
                     colors: {
                         brand: {
-                            black: '#0a0a0a',
+                            black: '#1a3a6e',
                             gray: '#6b7280',
                             light: '#f5f5f7',
                             border: '#e5e7eb',
@@ -68,6 +71,11 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        :root {
+            --brand: #1a3a6e;
+            --brand-dark: #122b52;
+        }
+
         /* ─── Nav Tab Underline ─────────────────────────── */
         .tab-btn {
             position: relative;
@@ -82,14 +90,14 @@
             left: 0;
             width: 100%;
             height: 2px;
-            background: #0a0a0a;
+            background: #1a3a6e;
             transform: scaleX(0);
             transform-origin: left;
             transition: transform 0.3s cubic-bezier(0.77, 0, 0.18, 1);
         }
 
         .tab-btn.active {
-            color: #0a0a0a;
+            color: #1a3a6e;
         }
 
         .tab-btn.active::after {
@@ -107,7 +115,7 @@
 
         /* ─── Hero text clip gradient ───────────────────── */
         .hero-headline {
-            background: linear-gradient(135deg, #0a0a0a 0%, #3d3d3d 100%);
+            background: linear-gradient(135deg, #1a3a6e 0%, #2a5298 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -133,8 +141,8 @@
 
         .service-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.1);
-            border-color: #0a0a0a;
+            box-shadow: 0 32px 64px rgba(26, 58, 110, 0.15);
+            border-color: #1a3a6e;
         }
 
         .service-card .badge {
@@ -142,7 +150,7 @@
         }
 
         .service-card:hover .badge {
-            background: #0a0a0a;
+            background: #1a3a6e;
             color: #ffffff;
         }
 
@@ -150,7 +158,7 @@
         .btn-primary {
             position: relative;
             overflow: hidden;
-            background: #0a0a0a;
+            background: #1a3a6e;
             color: #ffffff;
             transition: box-shadow 0.3s ease, transform 0.2s ease;
         }
@@ -159,7 +167,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: #2d2d2d;
+            background: #122b52;
             transform: translateX(-100%);
             transition: transform 0.4s cubic-bezier(0.77, 0, 0.18, 1);
         }
@@ -169,7 +177,7 @@
         }
 
         .btn-primary:hover {
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 12px 28px rgba(26, 58, 110, 0.35);
             transform: translateY(-2px);
         }
 
@@ -182,13 +190,13 @@
             position: relative;
             overflow: hidden;
             background: transparent;
-            color: #0a0a0a;
-            border: 1.5px solid #0a0a0a;
+            color: #1a3a6e;
+            border: 1.5px solid #1a3a6e;
             transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
         }
 
         .btn-secondary:hover {
-            background: #0a0a0a;
+            background: #1a3a6e;
             color: #ffffff;
             transform: translateY(-2px);
         }
@@ -201,8 +209,8 @@
         }
 
         .cal-box:hover {
-            border-color: #0a0a0a;
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.07);
+            border-color: #1a3a6e;
+            box-shadow: 0 16px 40px rgba(26, 58, 110, 0.1);
         }
 
         /* ─── Contact links ─────────────────────────────── */
@@ -211,7 +219,7 @@
         }
 
         .contact-link:hover {
-            color: #0a0a0a;
+            color: #1a3a6e;
         }
 
         .contact-link:hover .link-arrow {
@@ -327,7 +335,7 @@
         }
 
         .glow-card:hover {
-            box-shadow: 0 0 0 1.5px #0a0a0a, 0 24px 48px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 0 1.5px #1a3a6e, 0 24px 48px rgba(26, 58, 110, 0.12);
             transform: translateY(-6px);
         }
 
@@ -380,7 +388,77 @@
             animation-play-state: paused;
         }
 
-        /* ─── Gradient hero bg ───────────────────────────── */
+        /* ─── Hero Earth Section ──────────────────────────── */
+        .hero-earth {
+            position: relative;
+            overflow: hidden;
+            background: #04080f;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Canvas sits full behind */
+        #earth-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* A subtle vignette over the canvas so text pops */
+        .hero-earth::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 55% 80% at 50% 50%, transparent 30%, rgba(4, 8, 15, 0.72) 100%),
+                linear-gradient(to bottom, rgba(4, 8, 15, 0.35) 0%, transparent 30%, transparent 70%, rgba(4, 8, 15, 0.6) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* All hero text above vignette */
+        .hero-earth .hero-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+
+        /* Override headline gradient for dark bg */
+        .hero-earth .hero-headline {
+            background: linear-gradient(135deg, #ffffff 0%, #93c5fd 60%, #bfdbfe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Eyebrow pill on dark bg */
+        .hero-earth .eyebrow {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .hero-earth .eyebrow span:last-child {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Subhead on dark */
+        .hero-earth p.hero-sub {
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        /* Scroll hint on dark */
+        .hero-earth .scroll-hint {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .hero-earth .scroll-hint .scroll-line {
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), transparent);
+        }
+
+        /* ─── (keep old hero-bg for fallback / other sections) */
         .hero-bg {
             background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(165, 180, 252, 0.18) 0%, transparent 70%),
                 radial-gradient(ellipse 60% 40% at 80% 60%, rgba(110, 231, 183, 0.12) 0%, transparent 60%),
@@ -391,7 +469,7 @@
         .cal-popup-btn {
             position: relative;
             overflow: hidden;
-            background: #0a0a0a;
+            background: #1a3a6e;
             color: #fff;
             transition: box-shadow 0.3s ease, transform 0.2s ease;
         }
@@ -400,7 +478,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, #4f46e5, #0a0a0a);
+            background: linear-gradient(135deg, #2a5298, #122b52);
             opacity: 0;
             transition: opacity 0.4s ease;
         }
@@ -410,7 +488,7 @@
         }
 
         .cal-popup-btn:hover {
-            box-shadow: 0 16px 40px rgba(79, 70, 229, 0.35);
+            box-shadow: 0 16px 40px rgba(26, 58, 110, 0.4);
             transform: translateY(-3px);
         }
 
@@ -418,10 +496,97 @@
             position: relative;
             z-index: 1;
         }
+
+        /* ─── Loading Screen ─────────────────────────────── */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-logo {
+            width: 200px;
+            height: auto;
+            animation: logoPulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.06);
+                opacity: 0.75;
+            }
+        }
+
+        .loader-bar-wrap {
+            margin-top: 32px;
+            width: 120px;
+            height: 3px;
+            background: #e5e7eb;
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .loader-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #1a3a6e, #4f46e5, #1a3a6e);
+            background-size: 200% 100%;
+            border-radius: 99px;
+            animation: loaderFill 1.5s ease-in-out forwards, loaderShimmer 1.5s linear infinite;
+        }
+
+        @keyframes loaderFill {
+            0% {
+                width: 0%;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+
+        @keyframes loaderShimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
     </style>
 </head>
 
 <body class="min-h-screen bg-white">
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!--  LOADING SCREEN                                       -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div id="loading-screen">
+        <img src="maba-logo.png" alt="MABA" class="loader-logo" />
+        <div class="loader-bar-wrap">
+            <div class="loader-bar"></div>
+        </div>
+    </div>
 
     <!-- ══════════════════════════════════════════════════════ -->
     <!--  NAVBAR with TAB NAVIGATION                           -->
@@ -430,11 +595,8 @@
         style="opacity:0; transform:translateY(-20px);">
         <div class="max-w-5xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16">
             <!-- Logo -->
-            <button onclick="navigateTo('home')" class="flex items-center gap-2 group">
-                <div class="w-8 h-8 rounded-md bg-brand-black flex items-center justify-center">
-                    <span class="text-white font-bold text-sm tracking-tight">M</span>
-                </div>
-                <span class="font-bold text-lg tracking-tight text-brand-black">MABA</span>
+            <button onclick="navigateTo('home')" class="flex items-center group">
+                <img src="maba-logo.png" alt="MABA" style="height:50px; width:auto;" />
             </button>
 
             <!-- Desktop Tabs -->
@@ -470,19 +632,16 @@
     <!-- ══════════════════════════════════════════════════════ -->
     <section id="section-home" class="page-section active pt-24 sm:pt-32">
 
-        <!-- ── Hero ──────────────────────────────────────────── -->
-        <div class="hero-bg relative overflow-hidden">
-            <!-- Animated blobs -->
-            <div class="blob blob-1"></div>
-            <div class="blob blob-2"></div>
-            <div class="blob blob-3"></div>
-            <div class="max-w-4xl mx-auto px-5 sm:px-8 pt-10 sm:pt-20 pb-16 sm:pb-24 text-center relative z-10">
+        <!-- ── Hero Earth ─────────────────────────────────── -->
+        <div class="hero-earth">
+            <!-- Three.js Earth canvas -->
+            <canvas id="earth-canvas"></canvas>
+
+            <div class="hero-content max-w-4xl mx-auto px-5 sm:px-8 py-32 sm:py-48 text-center">
                 <!-- Eyebrow -->
-                <div
-                    class="eyebrow inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-200 bg-gray-50 mb-8 opacity-0">
-                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                    <span class="text-xs font-medium text-gray-500 tracking-wide uppercase">Agencia Digital ·
-                        España</span>
+                <div class="eyebrow inline-flex items-center gap-2 px-3 py-1.5 rounded-full border mb-8 opacity-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                    <span class="text-xs font-medium tracking-wide uppercase">Agencia Digital · España</span>
                 </div>
 
                 <!-- Headline -->
@@ -492,11 +651,9 @@
                 </h1>
 
                 <!-- Subhead -->
-                <p
-                    class="text-base sm:text-xl text-gray-500 font-light leading-relaxed max-w-xl mx-auto mb-10 opacity-0">
+                <p class="hero-sub text-base sm:text-xl font-light leading-relaxed max-w-xl mx-auto mb-10 opacity-0">
                     Diseñamos y optimizamos páginas web para restaurantes, barberías, estudios de tatuaje y más negocios
-                    de
-                    servicios en España. Resultados reales, sin tecnicismos.
+                    de servicios en España. Resultados reales, sin tecnicismos.
                 </p>
 
                 <!-- CTAs -->
@@ -506,18 +663,23 @@
                         <span>Agenda una videollamada gratis →</span>
                     </button>
                     <button onclick="navigateTo('services')"
-                        class="btn-secondary w-full sm:w-auto text-sm font-semibold px-8 py-3.5 rounded-full">
+                        class="w-full sm:w-auto text-sm font-semibold px-8 py-3.5 rounded-full"
+                        style="background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,0.4);transition:background 0.3s,border-color 0.3s,transform 0.2s;"
+                        onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.borderColor='rgba(255,255,255,0.7)';"
+                        onmouseout="this.style.background='transparent';this.style.borderColor='rgba(255,255,255,0.4)';">
                         Ver servicios y tarifas
                     </button>
                 </div>
 
                 <!-- Scroll hint -->
-                <div class="scroll-hint mt-14 flex flex-col items-center gap-2 text-gray-400 opacity-0">
-                    <span class="text-xs font-medium tracking-widest uppercase">Scroll</span>
-                    <div class="w-px h-8 bg-gradient-to-b from-gray-300 to-transparent animate-pulse"></div>
+                <div class="scroll-hint mt-14 flex flex-col items-center gap-2 opacity-0">
+                    <span class="text-xs font-medium tracking-widest uppercase"
+                        style="color:rgba(255,255,255,0.35);">Scroll</span>
+                    <div class="scroll-line w-px h-8 animate-pulse"
+                        style="background:linear-gradient(to bottom,rgba(255,255,255,0.3),transparent);"></div>
                 </div>
             </div>
-        </div><!-- /hero-bg -->
+        </div><!-- /hero-earth -->
 
         <!-- ── Animated accent strip ──────────────────────── -->
         <div class="accent-strip mx-auto max-w-4xl mb-0 mt-0"></div>
@@ -1188,10 +1350,10 @@
             </div>
 
             <!-- Contacto directo -->
-            <div class="grid sm:grid-cols-2 gap-4 fade-up">
+            <div class="grid gap-4 fade-up">
 
                 <!-- Email -->
-                <a href="mailto:hola@maba.es"
+                <a href="mailto:mabaagencyy@gmail.com"
                     class="contact-link group bg-brand-light border border-gray-100 rounded-2xl p-6 flex items-center gap-4 no-underline text-brand-black hover:border-gray-300 transition-all">
                     <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center flex-shrink-0">
                         <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
@@ -1201,30 +1363,12 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Email</p>
-                        <p class="font-semibold text-sm truncate">hola@maba.es</p>
+                        <p class="font-semibold text-sm truncate">mabaagencyy@gmail.com</p>
                     </div>
                     <span class="link-arrow text-gray-400 text-lg">→</span>
                 </a>
 
-                <!-- WhatsApp -->
-                <a href="https://wa.me/34600000000?text=Hola%2C%20me%20gustar%C3%ADa%20saber%20más%20sobre%20vuestros%20servicios%20web"
-                    target="_blank" rel="noopener"
-                    class="contact-link group bg-brand-light border border-gray-100 rounded-2xl p-6 flex items-center gap-4 no-underline text-brand-black hover:border-gray-300 transition-all">
-                    <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center flex-shrink-0">
-                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                            <path d="M12 2a10 10 0 0 1 8.39 15.43L22 22l-4.64-1.57A10 10 0 1 1 12 2z" stroke="#0a0a0a"
-                                stroke-width="1.5" />
-                            <path
-                                d="M8.5 9c0-.28.22-.5.5-.5h.01c.28 0 .5.22.5.5v.5c0 1 1 2 2 2h.5c.28 0 .5.22.5.5v.01c0 .28-.22.5-.5.5C10.5 12.5 8.5 10.5 8.5 9z"
-                                fill="#0a0a0a" />
-                        </svg>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-0.5">WhatsApp</p>
-                        <p class="font-semibold text-sm truncate">+34 600 000 000</p>
-                    </div>
-                    <span class="link-arrow text-gray-400 text-lg">→</span>
-                </a>
+
 
             </div>
 
@@ -1243,15 +1387,12 @@
     <!-- ══════════════════════════════════════════════════════ -->
     <footer class="border-t border-gray-100 py-10">
         <div class="max-w-5xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <button onclick="navigateTo('home')" class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded-md bg-brand-black flex items-center justify-center">
-                    <span class="text-white font-bold text-xs">M</span>
-                </div>
-                <span class="font-bold text-sm tracking-tight">MABA</span>
+            <button onclick="navigateTo('home')" class="flex items-center">
+                <img src="maba-logo.png" alt="MABA" style="height:38px; width:auto;" />
             </button>
             <p class="text-xs text-gray-400 text-center">
-                © 2025 MABA Digital. Todos los derechos reservados · <a href="mailto:hola@maba.es"
-                    class="hover:text-black transition">hola@maba.es</a>
+                © 2025 MABA Digital. Todos los derechos reservados · <a href="mailto:mabaagencyy@gmail.com"
+                    class="hover:text-black transition">mabaagencyy@gmail.com</a>
             </p>
             <div class="flex gap-4">
                 <button onclick="navigateTo('home')"
@@ -1343,6 +1484,22 @@
                 }
             );
         }
+
+        // ─── Loading Screen Dismissal ─────────────────────
+        (function () {
+            const loader = document.getElementById('loading-screen');
+            function hideLoader() {
+                if (loader) loader.classList.add('hidden');
+            }
+            // Hide after page load (with a small minimum display time)
+            if (document.readyState === 'complete') {
+                setTimeout(hideLoader, 800);
+            } else {
+                window.addEventListener('load', function () {
+                    setTimeout(hideLoader, 800);
+                });
+            }
+        })();
 
         // ─── Initial page load animations ────────────────────
         window.addEventListener('DOMContentLoaded', () => {
@@ -1458,19 +1615,20 @@
             };
         })(window, "https://app.cal.com/embed/embed.js", "init");
 
-        const CAL_USER = 'jaumesanro-stbxym';
+        const CAL_API_KEY = 'cal_live_841629ee7e5a5bcb4cd2e0c10d646c62';
+        const CAL_USER = 'maba-agency';
 
         // Init 30min popup namespace
         Cal("init", "cal30", { origin: "https://cal.com" });
         Cal.ns["cal30"]("ui", {
-            styles: { branding: { brandColor: "#0a0a0a" } },
+            styles: { branding: { brandColor: "#1a3a6e" } },
             hideEventTypeDetails: false,
         });
 
         // Init 15min popup namespace
         Cal("init", "cal15", { origin: "https://cal.com" });
         Cal.ns["cal15"]("ui", {
-            styles: { branding: { brandColor: "#0a0a0a" } },
+            styles: { branding: { brandColor: "#1a3a6e" } },
             hideEventTypeDetails: false,
         });
 
@@ -1522,7 +1680,7 @@
                                 borderSkipped: false,
                             },
                             {
-                                label: 'Con MABA',
+                                label: 'Con web',
                                 data: [8, 14, 22, 31, 38, 44],
                                 backgroundColor: '#0a0a0a',
                                 borderRadius: 8,
@@ -1676,4 +1834,200 @@
         });
     </script>
 
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!--  THREE.JS — Earth Globe Hero (procedural, no CDN img) -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <script>
+        (function () {
+            const canvas = document.getElementById('earth-canvas');
+            if (!canvas || typeof THREE === 'undefined') return;
+
+            // ─── Renderer ────────────────────────────────────────
+            const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setClearColor(0x04080f, 1);
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+            camera.position.z = 4.5;
+
+            function resize() {
+                const hero = canvas.closest('.hero-earth') || canvas.parentElement;
+                const w = hero.offsetWidth || window.innerWidth;
+                const h = hero.offsetHeight || window.innerHeight;
+                renderer.setSize(w, h, false);
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            // ─── Procedural Earth texture ─────────────────────────
+            // Uses simple hash noise — fast, bright, visible
+            function makeEarthTex() {
+                const W = 1024, H = 512;
+                const offscreen = document.createElement('canvas');
+                offscreen.width = W; offscreen.height = H;
+                const ctx = offscreen.getContext('2d');
+
+                // Simple hash noise
+                function hash(n) { n = Math.sin(n) * 43758.5453123; return n - Math.floor(n); }
+                function noise(x, y) {
+                    const ix = Math.floor(x), iy = Math.floor(y);
+                    const fx = x - ix, fy = y - iy;
+                    const ux = fx * fx * (3 - 2 * fx), uy = fy * fy * (3 - 2 * fy);
+                    return (
+                        hash(ix + iy * 57) * (1 - ux) * (1 - uy) +
+                        hash(ix + 1 + iy * 57) * ux * (1 - uy) +
+                        hash(ix + (iy + 1) * 57) * (1 - ux) * uy +
+                        hash(ix + 1 + (iy + 1) * 57) * ux * uy
+                    );
+                }
+                function fbm(x, y) {
+                    return noise(x, y) * 0.5 + noise(x * 2.1, y * 2.1) * 0.25 +
+                        noise(x * 4.2, y * 4.2) * 0.125 + noise(x * 8.4, y * 8.4) * 0.0625;
+                }
+
+                const img = ctx.createImageData(W, H);
+                const d = img.data;
+                for (let py = 0; py < H; py++) {
+                    const lat = (py / H - 0.5) * Math.PI;
+                    const latF = Math.cos(lat);
+                    for (let px = 0; px < W; px++) {
+                        const lon = (px / W) * Math.PI * 2;
+                        // Sphere-mapped noise coordinates for realistic continents
+                        const nx = Math.cos(lat) * Math.cos(lon) * 1.8 + 2;
+                        const ny = Math.cos(lat) * Math.sin(lon) * 1.8 + 3;
+                        const nz = Math.sin(lat) * 1.4 + 5;
+                        const n = fbm(nx + fbm(nx, ny), ny + nz * 0.3);
+                        // Sharpen: remap 0.4-0.6 → 0..1  
+                        const t = Math.max(0, Math.min(1, (n - 0.42) / 0.18));
+                        const land = t > 0.5;
+                        const idx = (py * W + px) * 4;
+
+                        // Polar cap blend
+                        const poleBlend = Math.max(0, (Math.abs(lat) - 1.2) * 5);
+
+                        if (poleBlend > 0) {
+                            // Ice caps — bright white/light blue
+                            const ice = Math.min(1, poleBlend);
+                            d[idx] = 210 + Math.round(ice * 45);
+                            d[idx + 1] = 225 + Math.round(ice * 30);
+                            d[idx + 2] = 240 + Math.round(ice * 15);
+                        } else if (land) {
+                            // Land — vivid green fading to brown/rocky
+                            const lv = (t - 0.5) * 2; // 0..1 from coast to highland
+                            d[idx] = Math.round(50 + lv * 80);   // R: 50-130 (brownish highlands)
+                            d[idx + 1] = Math.round(130 + lv * 30);   // G: 130-160 bright green
+                            d[idx + 2] = Math.round(40 + lv * 20);   // B: 40-60 (earthy)
+                        } else {
+                            // Ocean — deep vivid blue
+                            const ov = 1 - t * 2; // 0..1 deeper=darker
+                            d[idx] = Math.round(10 + ov * 40);   // R: 10-50
+                            d[idx + 1] = Math.round(60 + ov * 90);   // G: 60-150
+                            d[idx + 2] = Math.round(180 + ov * 55);   // B: 180-235 vivid blue
+                        }
+                        d[idx + 3] = 255;
+                    }
+                }
+                ctx.putImageData(img, 0, 0);
+                return new THREE.CanvasTexture(offscreen);
+            }
+
+            // ─── Cloud alpha texture ──────────────────────────────
+            function makeCloudTex() {
+                const W = 512, H = 256;
+                const offscreen = document.createElement('canvas');
+                offscreen.width = W; offscreen.height = H;
+                const ctx = offscreen.getContext('2d');
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, W, H);
+                for (let i = 0; i < 200; i++) {
+                    const x = Math.random() * W, y = Math.random() * H;
+                    const rx = 14 + Math.random() * 55, ry = 5 + Math.random() * 16;
+                    const g = ctx.createRadialGradient(x, y, 0, x, y, Math.max(rx, ry));
+                    g.addColorStop(0, 'rgba(255,255,255,0.7)');
+                    g.addColorStop(1, 'rgba(255,255,255,0)');
+                    ctx.save(); ctx.translate(x, y); ctx.scale(rx / ry, 1); ctx.translate(-x, -y);
+                    ctx.fillStyle = g;
+                    ctx.beginPath(); ctx.ellipse(x, y, ry, ry, 0, 0, Math.PI * 2); ctx.fill();
+                    ctx.restore();
+                }
+                return new THREE.CanvasTexture(offscreen);
+            }
+
+            // ─── Earth ───────────────────────────────────────────
+            const earthMesh = new THREE.Mesh(
+                new THREE.SphereGeometry(1, 64, 64),
+                new THREE.MeshLambertMaterial({ map: makeEarthTex() })
+            );
+            earthMesh.position.x = 1.5;  // offset to right side
+            scene.add(earthMesh);
+
+            // ─── Clouds ──────────────────────────────────────────
+            const cloudTex = makeCloudTex();
+            const cloudMesh = new THREE.Mesh(
+                new THREE.SphereGeometry(1.015, 64, 64),
+                new THREE.MeshLambertMaterial({ map: cloudTex, alphaMap: cloudTex, transparent: true, opacity: 0.5, depthWrite: false })
+            );
+            cloudMesh.position.x = 1.5;
+            scene.add(cloudMesh);
+
+            // ─── Atmosphere rim ──────────────────────────────────
+            const atmMesh = new THREE.Mesh(
+                new THREE.SphereGeometry(1.07, 64, 64),
+                new THREE.MeshLambertMaterial({ color: 0x4499ff, transparent: true, opacity: 0.10, side: THREE.BackSide, depthWrite: false })
+            );
+            atmMesh.position.x = 1.5;
+            scene.add(atmMesh);
+
+            // ─── Stars ───────────────────────────────────────────
+            const sp = new Float32Array(3500 * 3);
+            for (let i = 0; i < sp.length; i++) sp[i] = (Math.random() - 0.5) * 90;
+            const sGeo = new THREE.BufferGeometry();
+            sGeo.setAttribute('position', new THREE.BufferAttribute(sp, 3));
+            const stars = new THREE.Points(sGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.08, transparent: true, opacity: 0.9 }));
+            scene.add(stars);
+
+            // ─── Lighting — bright & clear ───────────────────────
+            // Strong white ambient so textures are always visible
+            scene.add(new THREE.AmbientLight(0xffffff, 2.2));
+            // Main sun from upper-right
+            const sun = new THREE.DirectionalLight(0xfff8f0, 2.0);
+            sun.position.set(5, 3, 5);
+            scene.add(sun);
+            // Soft blue fill
+            const fill = new THREE.DirectionalLight(0x4488ff, 0.5);
+            fill.position.set(-4, -2, 2);
+            scene.add(fill);
+
+            // ─── Mouse parallax ──────────────────────────────────
+            const mouse = { x: 0, y: 0 }, sm = { x: 0, y: 0 };
+            window.addEventListener('mousemove', e => {
+                mouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
+                mouse.y = (e.clientY / window.innerHeight - 0.5) * 2;
+            });
+
+            // ─── Render loop ─────────────────────────────────────
+            let ry = 0;
+            const clock = new THREE.Clock();
+            (function loop() {
+                requestAnimationFrame(loop);
+                const dt = clock.getDelta();
+                ry += dt * 0.06;
+                sm.x += (mouse.x - sm.x) * 0.045;
+                sm.y += (mouse.y - sm.y) * 0.045;
+
+                earthMesh.rotation.set(sm.y * 0.18, ry + sm.x * 0.28, 0);
+                cloudMesh.rotation.set(sm.y * 0.18, ry * 1.08 + sm.x * 0.28, 0);
+                stars.rotation.set(sm.y * -0.04, sm.x * -0.04, 0);
+
+                renderer.render(scene, camera);
+            })();
+        })();
+    </script>
+
+
 </body>
+
+</html>
