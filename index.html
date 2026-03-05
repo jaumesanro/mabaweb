@@ -12,8 +12,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -24,24 +22,22 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
                         brand: {
-                            dark: '#0f172a', // Slate 900
+                            dark: '#020617', // Slate 950
+                            darker: '#0f172a', // Slate 900
                             primary: '#4f46e5', // Indigo 600
+                            secondary: '#ec4899', // Pink 500
                             light: '#f8fafc', // Slate 50
                             border: '#e2e8f0', // Slate 200
                         }
                     },
-                    letterSpacing: {
-                        tightest: '-0.04em',
-                        tighter: '-0.02em',
-                    },
+                    letterSpacing: { tightest: '-0.04em', tighter: '-0.02em' },
                     boxShadow: {
                         'apple': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
                         'apple-hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        'glow': '0 0 40px -10px rgba(79, 70, 229, 0.5)',
                     }
                 }
             }
@@ -61,42 +57,30 @@
         }
 
         /* ─── Navigation Tabs ───────────────────────────────────── */
-        .tab-btn {
-            position: relative;
-            padding-bottom: 4px;
-            transition: color 0.3s ease;
-        }
-        .tab-btn::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: #0f172a;
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .tab-btn.active { color: #0f172a; font-weight: 600; }
-        .tab-btn.active::after { transform: scaleX(1); }
-
         .page-section { display: none; }
         .page-section.active { display: block; }
 
-        /* ─── Buttons (Stripe/Apple Style) ──────────────────────── */
+        /* ─── Buttons & Magnetism ───────────────────────────────── */
         .btn-primary {
             background: #0f172a;
             color: #ffffff;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: background 0.3s ease, box-shadow 0.3s ease;
             box-shadow: 0 4px 14px 0 rgba(15, 23, 42, 0.15);
         }
         .btn-primary:hover {
-            transform: translateY(-2px);
+            background: #1e293b;
             box-shadow: 0 6px 20px rgba(15, 23, 42, 0.23);
         }
+        
+        .btn-magnetic {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
 
-        /* ─── Cards & Micro-interactions ────────────────────────── */
+        /* ─── Cards ─────────────────────────────────────────────── */
         .premium-card {
             background: #ffffff;
             border: 1px solid #e2e8f0;
@@ -105,315 +89,385 @@
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .premium-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-8px);
             box-shadow: var(--tw-shadow-apple-hover);
             border-color: #cbd5e1;
         }
 
-        /* ─── Grain & Background Effects ────────────────────────── */
-        body::before {
-            content: '';
+        .dark-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        /* ─── Dynamic Background (Blobs) ────────────────────────── */
+        .blob-container {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            background: #f8fafc;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.6;
+            will-change: transform;
+        }
+        .blob-1 { background: #e0e7ff; width: 60vw; height: 60vw; top: -10%; left: -10%; } /* Indigo light */
+        .blob-2 { background: #fce7f3; width: 50vw; height: 50vw; top: 40%; right: -10%; } /* Pink light */
+        .blob-3 { background: #e0f2fe; width: 40vw; height: 40vw; bottom: -10%; left: 20%; } /* Sky light */
+
+        /* ─── Grain Noise Overlay ───────────────────────────────── */
+        .grain-overlay {
             position: fixed;
             inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-            opacity: 0.015;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+            opacity: 0.03;
             pointer-events: none;
             z-index: 9999;
         }
 
         /* ─── Utilities ─────────────────────────────────────────── */
-        .fade-up { opacity: 0; transform: translateY(30px); }
-        .hero-background-container {
-            position: absolute;
-            top: 0; right: 0; bottom: 0; left: 0;
-            z-index: -1;
-            overflow: hidden;
-            /* Reemplazamos el gradiente por una imagen de fondo de la Tierra desde el espacio */
-            background-image: 
-                /* Superposición sutil de gradiente oscuro para legibilidad del texto */
-                linear-gradient(to bottom, rgba(15, 23, 42, 0.7) 0%, rgba(15, 23, 42, 0.2) 50%, rgba(255, 255, 255, 1) 100%),
-                /* Imagen de la Tierra (puedes cambiar esta URL por tu imagen preferida) */
-                url('https://visibleearth.nasa.gov/images/73909/deep-space-climate-observatory-dscovr-first-image/73909_dscovrfirstimagefull.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
+        .fade-up { opacity: 0; transform: translateY(40px); }
+        
         .text-gradient {
-            background: linear-gradient(135deg, #4f46e5 0%, #f1f5f9 100%); /* Ajustado para fondo oscuro */
+            background: linear-gradient(135deg, #0f172a 0%, #4f46e5 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+        .text-gradient-dark {
+            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ─── Floating Sticky CTA ───────────────────────────────── */
+        .floating-cta {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            transform: translateY(100px); /* Hidden initially */
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
+        }
+        .floating-cta.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .blob-button {
+            position: relative;
+            overflow: hidden;
+        }
+        .blob-button::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 150%; height: 150%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s ease;
+        }
+        .blob-button:hover::before {
+            transform: translate(-50%, -50%) scale(1);
         }
     </style>
 </head>
 
 <body>
+    <div class="grain-overlay"></div>
 
-    <header id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-brand-border" style="opacity:0; transform:translateY(-20px);">
+    <header id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm" style="opacity:0; transform:translateY(-20px);">
         <div class="max-w-6xl mx-auto px-6 sm:px-10 flex items-center justify-between h-16 sm:h-20">
             <button onclick="navigateTo('home')" class="text-xl font-black tracking-tighter">
                 MABA<span class="text-brand-primary">.</span>
             </button>
 
             <nav class="hidden sm:flex items-center gap-10">
-                <button onclick="navigateTo('home')" class="tab-btn active text-sm text-slate-500" data-tab="home">Inicio</button>
-                <button onclick="navigateTo('services')" class="tab-btn text-sm text-slate-500" data-tab="services">Servicios</button>
-                <button onclick="navigateTo('contact')" class="tab-btn text-sm text-slate-500" data-tab="contact">Contacto</button>
+                <button onclick="navigateTo('home')" class="text-sm font-medium text-slate-600 hover:text-brand-dark transition-colors">Inicio</button>
+                <button onclick="navigateTo('services')" class="text-sm font-medium text-slate-600 hover:text-brand-dark transition-colors">Servicios</button>
             </nav>
 
-            <button onclick="navigateTo('contact')" class="btn-primary text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-full">
-                Agendar llamada
+            <button class="cal-trigger btn-primary btn-magnetic text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-full">
+                <span>Agendar llamada</span>
             </button>
         </div>
     </header>
 
+    <button class="cal-trigger floating-cta blob-button bg-brand-primary text-white font-bold py-4 px-6 rounded-full shadow-glow flex items-center gap-2 hover:bg-indigo-500 transition-colors">
+        <span class="text-lg">📞</span>
+        <span>Agenda tu cita</span>
+    </button>
+
     <section id="section-home" class="page-section active pt-24 sm:pt-32">
         
-        <div class="relative min-h-[90vh] flex items-center justify-center pt-10 pb-20">
-            <div class="hero-background-container"></div>
+        <div class="relative min-h-[85vh] flex items-center justify-center pt-10 pb-20 overflow-hidden">
+            <div class="blob-container">
+                <div class="blob blob-1"></div>
+                <div class="blob blob-2"></div>
+                <div class="blob blob-3"></div>
+                <div class="absolute inset-0 backdrop-blur-[60px] bg-white/30"></div>
+            </div>
 
             <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-slate-700/50 mb-8 hero-anim shadow-sm">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 backdrop-blur-md border border-white/50 mb-8 hero-anim shadow-sm">
                     <span class="w-2 h-2 rounded-full bg-brand-primary animate-pulse"></span>
-                    <span class="text-xs font-semibold tracking-wide text-slate-200 uppercase">Estudio Digital Premium</span>
+                    <span class="text-xs font-semibold tracking-wide text-brand-dark uppercase">Tu agencia digital en España</span>
                 </div>
 
-                <h1 class="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tightest leading-[1.05] text-white mb-8 hero-anim">
-                    Eleva tu negocio.<br />
-                    <span class="text-gradient">Domina tu sector.</span>
+                <h1 class="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tightest leading-[1.05] text-brand-dark mb-8 hero-anim">
+                    Webs que atraen.<br />
+                    <span class="text-gradient">Diseño que vende.</span>
                 </h1>
 
-                <p class="text-lg sm:text-xl font-normal text-slate-200 leading-relaxed max-w-2xl mx-auto mb-10 hero-anim">
-                    Diseñamos experiencias web de alto rendimiento para negocios de servicios en España. Menos fricción, más clientes.
+                <p class="text-lg sm:text-xl font-normal text-slate-600 leading-relaxed max-w-2xl mx-auto mb-10 hero-anim">
+                    Transformamos negocios de servicios (restaurantes, clínicas, estudios) en máquinas de captar clientes con webs ultrarrápidas y premium.
                 </p>
 
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4 hero-anim">
-                    <button onclick="navigateTo('contact')" class="btn-primary w-full sm:w-auto text-sm font-semibold px-8 py-4 rounded-full">
-                        Comenzar proyecto →
+                    <button class="cal-trigger btn-primary btn-magnetic w-full sm:w-auto text-sm font-semibold px-8 py-4 rounded-full">
+                        <span>Hablemos de tu proyecto →</span>
                     </button>
-                    <button onclick="navigateTo('services')" class="w-full sm:w-auto text-sm font-semibold px-8 py-4 rounded-full border border-slate-400 text-white hover:bg-white/10 transition-colors">
-                        Ver tarifas
+                    <button onclick="navigateTo('services')" class="btn-magnetic w-full sm:w-auto text-sm font-semibold px-8 py-4 rounded-full border border-slate-300 text-brand-dark bg-white/50 backdrop-blur-sm hover:bg-white transition-colors">
+                        <span>Ver servicios</span>
                     </button>
                 </div>
             </div>
         </div>
 
-        <div class="border-y border-brand-border bg-brand-light py-4 overflow-hidden">
-            <div class="flex whitespace-nowrap gap-12 animate-[marquee_20s_linear_infinite] opacity-60">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">✦ Diseño UI/UX</span>
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">✦ Optimización SEO</span>
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">✦ Alta Conversión</span>
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">✦ Soporte Prioritario</span>
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">✦ Diseño UI/UX</span>
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">✦ Optimización SEO</span>
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">✦ Alta Conversión</span>
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">✦ Soporte Prioritario</span>
+        <div class="bg-brand-darker py-5 overflow-hidden rotate-[-1deg] scale-105 shadow-xl relative z-20">
+            <div class="flex whitespace-nowrap gap-12 animate-[marquee_25s_linear_infinite]">
+                <span class="text-sm font-bold text-white/50 uppercase tracking-widest">✦ Sin plantillas</span>
+                <span class="text-sm font-bold text-white/50 uppercase tracking-widest">✦ Carga en &lt;1 segundo</span>
+                <span class="text-sm font-bold text-white/50 uppercase tracking-widest">✦ SEO Local Integrado</span>
+                <span class="text-sm font-bold text-white/50 uppercase tracking-widest">✦ Trato directo</span>
+                <span class="text-sm font-bold text-white/50 uppercase tracking-widest">✦ Sin plantillas</span>
+                <span class="text-sm font-bold text-white/50 uppercase tracking-widest">✦ Carga en &lt;1 segundo</span>
+                <span class="text-sm font-bold text-white/50 uppercase tracking-widest">✦ SEO Local Integrado</span>
+                <span class="text-sm font-bold text-white/50 uppercase tracking-widest">✦ Trato directo</span>
             </div>
         </div>
 
         <div class="max-w-6xl mx-auto px-6 py-24 sm:py-32 grid md:grid-cols-2 gap-16 items-center">
             <div class="fade-up">
-                <h2 class="text-3xl sm:text-5xl font-black tracking-tightest mb-6">
-                    Creados para la realidad de tu negocio.
+                <span class="text-brand-primary font-bold tracking-wider uppercase text-xs mb-4 block">Sobre nosotros</span>
+                <h2 class="text-3xl sm:text-5xl font-black tracking-tightest mb-6 text-brand-darker">
+                    Entendemos tu día a día.
                 </h2>
-                <p class="text-slate-500 leading-relaxed mb-6 text-lg">
-                    Conocemos los retos de un restaurante, una barbería o un estudio físico. No necesitas jerga técnica ni complicaciones, necesitas un sistema digital que funcione 24/7.
+                <p class="text-slate-600 leading-relaxed mb-6 text-lg">
+                    Sabemos que gestionar un negocio local es duro. No necesitas humo ni agencias que hablan raro. Necesitas una web que traiga reservas mientras tú trabajas.
                 </p>
-                <p class="text-slate-500 leading-relaxed text-lg">
-                    Nuestro proceso es transparente y orientado 100% a la conversión: más reservas, más llamadas, más rentabilidad.
-                </p>
+                <div class="grid grid-cols-2 gap-6 mt-10">
+                    <div>
+                        <p class="text-4xl font-black text-brand-dark mb-1">+40</p>
+                        <p class="text-sm text-slate-500 font-medium">Negocios escalados</p>
+                    </div>
+                    <div>
+                        <p class="text-4xl font-black text-brand-dark mb-1">24h</p>
+                        <p class="text-sm text-slate-500 font-medium">Soporte directo</p>
+                    </div>
+                </div>
             </div>
             <div class="fade-up relative">
-                <div class="premium-card p-10 bg-brand-light relative overflow-hidden">
-                    <div class="absolute -top-24 -right-24 w-64 h-64 bg-brand-primary opacity-10 rounded-full blur-3xl"></div>
-                    <p class="text-6xl font-black tracking-tighter text-brand-dark mb-2">100%</p>
-                    <p class="text-sm font-semibold text-brand-primary uppercase tracking-wider mb-8">Enfoque local</p>
+                <div class="premium-card p-10 bg-white">
+                    <h3 class="font-bold text-xl mb-4">Especialistas en:</h3>
                     <ul class="space-y-4">
-                        <li class="flex items-center gap-3 text-slate-600 font-medium">
-                            <span class="w-1.5 h-1.5 rounded-full bg-brand-primary"></span> Restaurantes & Hostelería
+                        <li class="flex items-center gap-4 p-3 rounded-xl bg-slate-50 border border-slate-100 transition hover:border-brand-primary/30">
+                            <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-lg">🍽️</div>
+                            <span class="font-medium text-brand-dark">Hostelería y Restauración</span>
                         </li>
-                        <li class="flex items-center gap-3 text-slate-600 font-medium">
-                            <span class="w-1.5 h-1.5 rounded-full bg-brand-primary"></span> Centros de Estética & Salud
+                        <li class="flex items-center gap-4 p-3 rounded-xl bg-slate-50 border border-slate-100 transition hover:border-brand-primary/30">
+                            <div class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-lg">💇‍♀️</div>
+                            <span class="font-medium text-brand-dark">Clínicas y Centros de Estética</span>
                         </li>
-                        <li class="flex items-center gap-3 text-slate-600 font-medium">
-                            <span class="w-1.5 h-1.5 rounded-full bg-brand-primary"></span> Estudios de Tatuaje & Barberías
+                        <li class="flex items-center gap-4 p-3 rounded-xl bg-slate-50 border border-slate-100 transition hover:border-brand-primary/30">
+                            <div class="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-lg">🖋️</div>
+                            <span class="font-medium text-brand-dark">Estudios y Barberías</span>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
 
-        <div id="impact-section" class="bg-brand-light py-24 sm:py-32">
-            <div class="max-w-6xl mx-auto px-6">
+        <div id="impact-section" class="bg-brand-dark py-24 sm:py-32 relative overflow-hidden">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-primary/20 blur-[120px] rounded-full pointer-events-none"></div>
+
+            <div class="max-w-6xl mx-auto px-6 relative z-10">
                 <div class="text-center mb-20 fade-up">
-                    <h2 class="text-3xl sm:text-5xl font-black tracking-tightest mb-6">El impacto de un buen diseño.</h2>
-                    <p class="text-slate-500 max-w-2xl mx-auto text-lg">Datos reales de negocios locales tras implementar nuestras soluciones digitales.</p>
+                    <h2 class="text-3xl sm:text-5xl font-black tracking-tightest mb-6 text-white">
+                        Los datos no mienten.
+                    </h2>
+                    <p class="text-slate-400 max-w-2xl mx-auto text-lg">Una web no es un gasto, es tu mejor comercial. Así rinden los negocios que confían en MABA.</p>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-8">
-                    <div class="premium-card p-8 fade-up">
+                    <div class="premium-card dark-card p-8 fade-up border-white/10">
                         <div class="mb-6">
-                            <h3 class="text-xl font-bold tracking-tight text-brand-dark">Conversión de Clientes</h3>
-                            <p class="text-sm text-slate-500 mt-1">Antes y después del rediseño web</p>
+                            <h3 class="text-xl font-bold tracking-tight text-white">Nuevos Clientes (Mensual)</h3>
+                            <p class="text-sm text-slate-400 mt-1">Caso real: Barbería tras rediseño</p>
                         </div>
                         <div class="relative h-64 w-full">
                             <canvas id="chartBar"></canvas>
                         </div>
                     </div>
-                    <div class="premium-card p-8 fade-up" style="transition-delay: 0.1s;">
+                    <div class="premium-card dark-card p-8 fade-up border-white/10" style="transition-delay: 0.1s;">
                         <div class="mb-6">
-                            <h3 class="text-xl font-bold tracking-tight text-brand-dark">Crecimiento Orgánico (SEO)</h3>
-                            <p class="text-sm text-slate-500 mt-1">Tráfico mensual (Primeros 6 meses)</p>
+                            <h3 class="text-xl font-bold tracking-tight text-white">Tráfico Orgánico Google</h3>
+                            <p class="text-sm text-slate-400 mt-1">Evolución primeros 6 meses</p>
                         </div>
                         <div class="relative h-64 w-full">
                             <canvas id="chartLine"></canvas>
                         </div>
                     </div>
                 </div>
+                
+                <div class="mt-16 text-center fade-up">
+                    <button class="cal-trigger btn-magnetic px-8 py-4 rounded-full bg-white text-brand-dark font-bold hover:bg-slate-200 transition-colors shadow-glow">
+                        <span>Quiero estos resultados →</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-6xl mx-auto px-6 py-24 sm:py-32 bg-white">
+            <div class="text-center mb-16 fade-up">
+                <span class="text-brand-primary font-bold tracking-wider uppercase text-xs mb-4 block">Metodología</span>
+                <h2 class="text-3xl sm:text-5xl font-black tracking-tightest mb-6 text-brand-darker">Lanzamiento en 4 pasos.</h2>
+            </div>
+
+            <div class="grid md:grid-cols-4 gap-8 relative">
+                <div class="hidden md:block absolute top-8 left-[10%] right-[10%] h-px bg-slate-200 -z-10"></div>
+
+                <div class="fade-up relative group">
+                    <div class="w-16 h-16 rounded-2xl bg-white border-2 border-slate-200 flex items-center justify-center font-black text-xl text-brand-dark mx-auto mb-6 group-hover:border-brand-primary transition-colors">
+                        1
+                    </div>
+                    <div class="text-center">
+                        <h3 class="font-bold text-lg mb-2">Videollamada</h3>
+                        <p class="text-sm text-slate-500">Nos cuentas tu negocio y objetivos. Totalmente gratis.</p>
+                    </div>
+                </div>
+                <div class="fade-up relative group" style="transition-delay: 0.1s;">
+                    <div class="w-16 h-16 rounded-2xl bg-white border-2 border-slate-200 flex items-center justify-center font-black text-xl text-brand-dark mx-auto mb-6 group-hover:border-brand-primary transition-colors">
+                        2
+                    </div>
+                    <div class="text-center">
+                        <h3 class="font-bold text-lg mb-2">Propuesta</h3>
+                        <p class="text-sm text-slate-500">Recibes un diseño visual previo y presupuesto cerrado.</p>
+                    </div>
+                </div>
+                <div class="fade-up relative group" style="transition-delay: 0.2s;">
+                    <div class="w-16 h-16 rounded-2xl bg-white border-2 border-slate-200 flex items-center justify-center font-black text-xl text-brand-dark mx-auto mb-6 group-hover:border-brand-primary transition-colors">
+                        3
+                    </div>
+                    <div class="text-center">
+                        <h3 class="font-bold text-lg mb-2">Desarrollo</h3>
+                        <p class="text-sm text-slate-500">Programamos tu web optimizada para Google y móviles.</p>
+                    </div>
+                </div>
+                <div class="fade-up relative group" style="transition-delay: 0.3s;">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-primary text-white shadow-glow flex items-center justify-center font-black text-xl mx-auto mb-6 transition-transform group-hover:scale-110">
+                        4
+                    </div>
+                    <div class="text-center">
+                        <h3 class="font-bold text-lg mb-2">Lanzamiento</h3>
+                        <p class="text-sm text-slate-500">Publicamos y empezamos a medir resultados de inmediato.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="max-w-6xl mx-auto px-6 py-24 sm:py-32">
-            <div class="text-center mb-16 fade-up">
-                <h2 class="text-3xl sm:text-5xl font-black tracking-tightest mb-6">Nuestro proceso.</h2>
-                <p class="text-slate-500 max-w-2xl mx-auto text-lg">Un flujo de trabajo claro, probado y sin sorpresas. Pasamos de la idea a la ejecución en 4 pasos.</p>
-            </div>
-
-            <div class="relative grid md:grid-cols-4 gap-6">
-                <div class="hidden md:block absolute top-12 left-[12%] right-[12%] h-px bg-slate-200 -z-10"></div>
-
-                <div class="bg-white fade-up" style="transition-delay: 0s;">
-                    <div class="w-16 h-16 rounded-2xl bg-brand-light border border-brand-border flex items-center justify-center font-black text-xl text-brand-dark mx-auto md:mx-0 mb-6 shadow-sm">
-                        01
-                    </div>
-                    <div class="text-center md:text-left">
-                        <h3 class="font-bold text-lg mb-2 text-brand-dark">Análisis Gratuito</h3>
-                        <p class="text-sm text-slate-500 leading-relaxed">Estudiamos tu negocio y competencia en una videollamada inicial de 30 minutos, sin ningún tipo de compromiso.</p>
-                    </div>
-                </div>
-
-                <div class="bg-white fade-up" style="transition-delay: 0.1s;">
-                    <div class="w-16 h-16 rounded-2xl bg-brand-light border border-brand-border flex items-center justify-center font-black text-xl text-brand-dark mx-auto md:mx-0 mb-6 shadow-sm">
-                        02
-                    </div>
-                    <div class="text-center md:text-left">
-                        <h3 class="font-bold text-lg mb-2 text-brand-dark">Propuesta y Diseño</h3>
-                        <p class="text-sm text-slate-500 leading-relaxed">Te enviamos una estructura visual y un presupuesto cerrado. Si estás de acuerdo, comenzamos con el diseño UI/UX.</p>
-                    </div>
-                </div>
-
-                <div class="bg-white fade-up" style="transition-delay: 0.2s;">
-                    <div class="w-16 h-16 rounded-2xl bg-brand-light border border-brand-border flex items-center justify-center font-black text-xl text-brand-dark mx-auto md:mx-0 mb-6 shadow-sm">
-                        03
-                    </div>
-                    <div class="text-center md:text-left">
-                        <h3 class="font-bold text-lg mb-2 text-brand-dark">Desarrollo Web</h3>
-                        <p class="text-sm text-slate-500 leading-relaxed">Programamos tu página asegurando máxima velocidad, adaptabilidad móvil e integración SEO básica.</p>
-                    </div>
-                </div>
-
-                <div class="bg-white fade-up" style="transition-delay: 0.3s;">
-                    <div class="w-16 h-16 rounded-2xl bg-brand-primary flex items-center justify-center font-black text-xl text-white mx-auto md:mx-0 mb-6 shadow-lg shadow-brand-primary/30">
-                        04
-                    </div>
-                    <div class="text-center md:text-left">
-                        <h3 class="font-bold text-lg mb-2 text-brand-dark">Lanzamiento</h3>
-                        <p class="text-sm text-slate-500 leading-relaxed">Publicamos tu web. Te acompañamos con soporte y métricas para asegurar que se convierte en tu mejor herramienta de ventas.</p>
-                    </div>
-                </div>
+        <div class="max-w-5xl mx-auto px-6 pb-24 fade-up">
+            <div class="bg-gradient-to-r from-brand-primary to-indigo-800 rounded-3xl p-10 sm:p-14 text-center text-white shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+                
+                <h2 class="text-3xl sm:text-4xl font-black mb-4 relative z-10">Deja de perder clientes por internet.</h2>
+                <p class="text-indigo-100 mb-8 max-w-xl mx-auto text-lg relative z-10">Reserva 30 minutos con nuestro equipo. Analizaremos tu situación actual y te daremos un plan de acción sin coste.</p>
+                <button class="cal-trigger btn-magnetic bg-white text-brand-primary font-bold px-8 py-4 rounded-full shadow-lg hover:scale-105 transition-transform relative z-10">
+                    <span>Agendar diagnóstico gratuito</span>
+                </button>
             </div>
         </div>
 
     </section>
 
-    <section id="section-services" class="page-section pt-24 sm:pt-32 pb-24 bg-brand-light">
+    <section id="section-services" class="page-section pt-24 sm:pt-32 pb-24 bg-slate-50">
         <div class="max-w-6xl mx-auto px-6">
             <div class="text-center mb-20 fade-up">
-                <h2 class="text-3xl sm:text-5xl font-black tracking-tightest mb-6">Inversión transparente.</h2>
-                <p class="text-slate-500 max-w-2xl mx-auto text-lg">Soluciones de alto nivel estructuradas para escalar tu negocio sin cuotas ocultas.</p>
+                <span class="text-brand-primary font-bold tracking-wider uppercase text-xs mb-4 block">Tarifas</span>
+                <h2 class="text-3xl sm:text-5xl font-black tracking-tightest mb-6">Inversión clara y directa.</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto text-lg">Sin presupuestos ocultos ni sorpresas. Elige lo que tu negocio necesita ahora mismo.</p>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
                 <div class="premium-card p-8 flex flex-col fade-up">
-                    <h3 class="text-xl font-bold text-brand-dark mb-2">Creación Web</h3>
-                    <p class="text-sm text-slate-500 mb-6">Para negocios que empiezan desde cero.</p>
-                    <p class="text-4xl font-black tracking-tightest text-brand-dark mb-8">890€ <span class="text-base font-normal text-slate-400">pago único</span></p>
+                    <h3 class="text-xl font-bold text-brand-dark mb-2">Nueva Web</h3>
+                    <p class="text-sm text-slate-500 mb-6">Presencia profesional desde cero.</p>
+                    <p class="text-4xl font-black tracking-tightest text-brand-dark mb-8">890€ <span class="text-base font-normal text-slate-400">único</span></p>
                     <ul class="space-y-4 mb-8 flex-1">
-                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary">✓</span> Diseño UI/UX a medida</li>
-                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary">✓</span> Totalmente Responsive</li>
-                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary">✓</span> Estructura SEO inicial</li>
-                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary">✓</span> Integración reservas / contacto</li>
+                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary font-bold">✓</span> Diseño UI/UX a medida</li>
+                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary font-bold">✓</span> Optimizado para móvil</li>
+                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary font-bold">✓</span> Formulario de reservas</li>
                     </ul>
-                    <button onclick="navigateTo('contact')" class="w-full py-3 rounded-full border-2 border-slate-200 text-slate-700 font-semibold hover:border-brand-dark hover:text-brand-dark transition-colors">Solicitar info</button>
+                    <button class="cal-trigger w-full py-3 rounded-full border-2 border-slate-200 text-slate-700 font-bold hover:border-brand-dark hover:text-brand-dark transition-colors">Solicitar</button>
                 </div>
 
-                <div class="premium-card p-8 flex flex-col fade-up relative ring-2 ring-brand-primary shadow-xl scale-105" style="z-index: 10;">
-                    <div class="absolute top-0 right-8 transform -translate-y-1/2">
-                        <span class="bg-brand-primary text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Más popular</span>
+                <div class="premium-card bg-brand-darker border-brand-darker p-8 flex flex-col fade-up relative scale-105 shadow-2xl" style="z-index: 10;">
+                    <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <span class="bg-brand-primary text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wide shadow-glow">Más demandado</span>
                     </div>
-                    <h3 class="text-xl font-bold text-brand-dark mb-2">Rediseño Pro</h3>
-                    <p class="text-sm text-slate-500 mb-6">Eleva el nivel de tu web actual.</p>
-                    <p class="text-4xl font-black tracking-tightest text-brand-dark mb-8">590€ <span class="text-base font-normal text-slate-400">pago único</span></p>
+                    <h3 class="text-xl font-bold text-white mb-2">Rediseño Pro</h3>
+                    <p class="text-sm text-slate-400 mb-6">Multiplica las conversiones de tu web actual.</p>
+                    <p class="text-4xl font-black tracking-tightest text-white mb-8">590€ <span class="text-base font-normal text-slate-500">único</span></p>
                     <ul class="space-y-4 mb-8 flex-1">
-                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary">✓</span> Modernización estética total</li>
-                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary">✓</span> Mejora extrema de velocidad</li>
-                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary">✓</span> Optimización de embudo UX</li>
-                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary">✓</span> Auditoría SEO incluida</li>
+                        <li class="flex items-start gap-3 text-slate-300 text-sm"><span class="text-brand-primary font-bold">✓</span> Modernización visual completa</li>
+                        <li class="flex items-start gap-3 text-slate-300 text-sm"><span class="text-brand-primary font-bold">✓</span> Mejora radical de velocidad</li>
+                        <li class="flex items-start gap-3 text-slate-300 text-sm"><span class="text-brand-primary font-bold">✓</span> Optimización del embudo (UX)</li>
                     </ul>
-                    <button onclick="navigateTo('contact')" class="btn-primary w-full py-3 rounded-full font-semibold">Comenzar mejora</button>
+                    <button class="cal-trigger btn-primary w-full py-3 rounded-full font-bold bg-brand-primary hover:bg-indigo-500 shadow-glow">Agendar llamada</button>
                 </div>
 
                 <div class="premium-card p-8 flex flex-col fade-up">
                     <h3 class="text-xl font-bold text-brand-dark mb-2">Mantenimiento</h3>
-                    <p class="text-sm text-slate-500 mb-6">Nosotros nos encargamos de todo.</p>
-                    <p class="text-4xl font-black tracking-tightest text-brand-dark mb-8">59€ <span class="text-base font-normal text-slate-400">/ mes</span></p>
+                    <p class="text-sm text-slate-500 mb-6">Olvídate de la parte técnica.</p>
+                    <p class="text-4xl font-black tracking-tightest text-brand-dark mb-8">59€ <span class="text-base font-normal text-slate-400">/mes</span></p>
                     <ul class="space-y-4 mb-8 flex-1">
-                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary">✓</span> Hosting premium ultrarrápido</li>
-                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary">✓</span> Actualizaciones mensuales</li>
-                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary">✓</span> Backups de seguridad</li>
-                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary">✓</span> Soporte técnico directo</li>
+                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary font-bold">✓</span> Hosting ultrarrápido</li>
+                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary font-bold">✓</span> Cambios de texto/fotos ilimitados</li>
+                        <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary font-bold">✓</span> Soporte por WhatsApp</li>
                     </ul>
-                    <button onclick="navigateTo('contact')" class="w-full py-3 rounded-full border-2 border-slate-200 text-slate-700 font-semibold hover:border-brand-dark hover:text-brand-dark transition-colors">Solicitar info</button>
+                    <button class="cal-trigger w-full py-3 rounded-full border-2 border-slate-200 text-slate-700 font-bold hover:border-brand-dark hover:text-brand-dark transition-colors">Solicitar</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="section-contact" class="page-section pt-24 sm:pt-32 pb-24 bg-white">
-        <div class="max-w-3xl mx-auto px-6">
-            <div class="text-center mb-16 fade-up">
-                <h2 class="text-3xl sm:text-5xl font-black tracking-tightest mb-6">Agenda tu sesión.</h2>
-                <p class="text-slate-500 max-w-lg mx-auto text-lg">Hablemos de tu negocio. 30 minutos, sin compromiso, para evaluar si somos el fit perfecto.</p>
-            </div>
+    <footer class="bg-brand-dark pt-20 pb-10 border-t border-white/10 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-brand-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-            <div class="premium-card p-8 sm:p-10 fade-up">
-                <div class="grid sm:grid-cols-2 gap-6">
-                    <div class="bg-brand-light border border-slate-200 rounded-2xl p-6 hover:border-brand-primary transition-colors cursor-pointer" id="open-cal-30">
-                        <div class="w-10 h-10 rounded-full bg-brand-dark text-white flex items-center justify-center mb-4">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <h4 class="font-bold text-lg text-brand-dark">Auditoría 30 min</h4>
-                        <p class="text-sm text-slate-500 mt-2 mb-4">Análisis de tu web actual y propuesta de estrategia.</p>
-                        <span class="text-brand-primary font-semibold text-sm">Elegir horario →</span>
-                    </div>
-
-                    <div class="bg-brand-light border border-slate-200 rounded-2xl p-6 flex flex-col justify-center">
-                        <h4 class="font-bold text-lg text-brand-dark mb-2">¿Prefieres escribirnos?</h4>
-                        <p class="text-sm text-slate-500 mb-4">Respondemos en menos de 24 horas laborables.</p>
-                        <a href="mailto:mabaagencyy@gmail.com" class="inline-flex items-center gap-2 text-brand-dark font-semibold hover:text-brand-primary transition-colors">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                            mabaagencyy@gmail.com
-                        </a>
-                    </div>
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-10 mb-16">
+                <div class="text-center md:text-left">
+                    <h2 class="text-3xl sm:text-4xl font-black text-white mb-4">¿Preparado para escalar?</h2>
+                    <p class="text-slate-400">Escríbenos o agenda una videollamada directamente.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button class="cal-trigger btn-magnetic bg-brand-primary text-white font-bold px-8 py-4 rounded-full shadow-glow">
+                        <span>📅 Agendar en Cal.com</span>
+                    </button>
+                    <a href="mailto:mabaagencyy@gmail.com" class="btn-magnetic bg-white/10 text-white font-bold px-8 py-4 rounded-full border border-white/20 hover:bg-white/20 transition-colors flex items-center justify-center">
+                        <span>✉️ Enviar Email</span>
+                    </a>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <footer class="border-t border-brand-border py-8 bg-white">
-        <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <span class="text-xl font-black tracking-tighter">MABA<span class="text-brand-primary">.</span></span>
-            <p class="text-sm text-slate-400">© 2026 MABA Digital. Creado para escalar.</p>
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <span class="text-xl font-black tracking-tighter text-white">MABA<span class="text-brand-primary">.</span></span>
+                <p class="text-sm text-slate-500">© 2026 MABA Digital. Agencia web para servicios.</p>
+            </div>
         </div>
     </footer>
 
@@ -422,10 +476,7 @@
 
         // --- Navegación SPA ---
         function navigateTo(tabId) {
-            const sections = document.querySelectorAll('.page-section');
-            const tabBtns = document.querySelectorAll('.tab-btn');
             const current = document.querySelector('.page-section.active');
-
             if (current && current.id === `section-${tabId}`) return;
 
             if (current) {
@@ -439,12 +490,6 @@
             } else {
                 showTab(tabId);
             }
-
-            tabBtns.forEach(btn => {
-                if (btn.dataset.tab === tabId) btn.classList.add('active');
-                else btn.classList.remove('active');
-            });
-
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -457,15 +502,11 @@
                 { opacity: 0, y: 30 }, 
                 { opacity: 1, y: 0, duration: 0.6, ease: 'power4.out' }
             );
-
-            // Re-trigger scroll animations for internal elements
             ScrollTrigger.refresh();
-            
-            // Re-init charts if navigating to home
             if(tabId === 'home') initCharts();
         }
 
-        // --- Animaciones de Entrada (Hero y Scroll) ---
+        // --- Animaciones GSAP Base ---
         window.addEventListener('DOMContentLoaded', () => {
             gsap.to('#navbar', { opacity: 1, y: 0, duration: 1, ease: 'power4.out' });
             gsap.fromTo('.hero-anim', 
@@ -473,7 +514,6 @@
                 { opacity: 1, y: 0, duration: 1.2, stagger: 0.15, ease: 'power4.out', delay: 0.2 }
             );
 
-            // Scroll Fade Ups
             const fadeUps = document.querySelectorAll('.fade-up');
             fadeUps.forEach((el) => {
                 gsap.fromTo(el,
@@ -486,9 +526,44 @@
             });
         });
 
-        // --- Three.js (Sección eliminada/desactivada para usar imagen de fondo) ---
+        // --- Botones Magnéticos (Interacción Premium) ---
+        const magneticButtons = document.querySelectorAll('.btn-magnetic');
+        magneticButtons.forEach(btn => {
+            const text = btn.querySelector('span');
+            
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                // Mueve el botón sutilmente
+                gsap.to(btn, { x: x * 0.3, y: y * 0.3, duration: 0.4, ease: "power2.out" });
+                // Mueve el texto un poco más para efecto parallax interior
+                if(text) gsap.to(text, { x: x * 0.2, y: y * 0.2, duration: 0.4, ease: "power2.out" });
+            });
 
-        // --- Chart.js ---
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.3)" });
+                if(text) gsap.to(text, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.3)" });
+            });
+        });
+
+        // --- Animación de los Blobs (Fondo Hero) ---
+        gsap.to(".blob-1", { x: "10vw", y: "5vh", rotation: 10, duration: 15, repeat: -1, yoyo: true, ease: "sine.inOut" });
+        gsap.to(".blob-2", { x: "-10vw", y: "-5vh", rotation: -10, duration: 18, repeat: -1, yoyo: true, ease: "sine.inOut" });
+        gsap.to(".blob-3", { x: "5vw", y: "-10vh", duration: 12, repeat: -1, yoyo: true, ease: "sine.inOut" });
+
+        // --- Botón Flotante Sticky ---
+        const floatingCta = document.querySelector('.floating-cta');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                floatingCta.classList.add('visible');
+            } else {
+                floatingCta.classList.remove('visible');
+            }
+        });
+
+        // --- Chart.js (Dark Mode Settings inside the dark section) ---
         let chartsInit = false;
         function initCharts() {
             if (chartsInit) return;
@@ -504,56 +579,55 @@
             new Chart(barCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    labels: ['Mes 1', 'Mes 2', 'Mes 3', 'Mes 4'],
                     datasets: [
-                        { label: 'Sin Web', data: [12, 14, 13, 15], backgroundColor: '#e2e8f0', borderRadius: 6 },
+                        { label: 'Sin Web', data: [8, 10, 9, 12], backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 6 },
                         { label: 'Con MABA', data: [15, 25, 38, 52], backgroundColor: '#4f46e5', borderRadius: 6 }
                     ]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } },
+                    plugins: { legend: { position: 'bottom', labels: {color: '#fff'} } },
                     scales: {
-                        x: { grid: { display: false } },
-                        y: { border: { display: false }, grid: { color: '#f1f5f9' } }
+                        x: { grid: { display: false }, ticks: {color: '#94a3b8'} },
+                        y: { border: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: {color: '#94a3b8'} }
                     }
                 }
             });
 
             // Gráfico Líneas
             const gradient = lineCtx.getContext('2d').createLinearGradient(0, 0, 0, 250);
-            gradient.addColorStop(0, 'rgba(79, 70, 229, 0.2)');
+            gradient.addColorStop(0, 'rgba(79, 70, 229, 0.4)');
             gradient.addColorStop(1, 'rgba(79, 70, 229, 0)');
 
             new Chart(lineCtx, {
                 type: 'line',
                 data: {
-                    labels: ['Mes 1', 'Mes 2', 'Mes 3', 'Mes 4', 'Mes 5', 'Mes 6'],
+                    labels: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6'],
                     datasets: [{
-                        label: 'Visitas', data: [200, 450, 800, 1200, 1800, 2500],
-                        borderColor: '#0f172a', backgroundColor: gradient,
-                        borderWidth: 3, pointRadius: 0, fill: true, tension: 0.4
+                        label: 'Visitas', data: [120, 250, 400, 700, 1200, 1800],
+                        borderColor: '#818cf8', backgroundColor: gradient,
+                        borderWidth: 3, pointRadius: 4, pointBackgroundColor: '#fff', fill: true, tension: 0.4
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { grid: { display: false } },
-                        y: { border: { display: false }, grid: { color: '#f1f5f9' } }
+                        x: { grid: { display: false }, ticks: {color: '#94a3b8'} },
+                        y: { border: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: {color: '#94a3b8'} }
                     }
                 }
             });
         }
 
-        // Lazy load charts
         const impactObs = new IntersectionObserver((entries) => {
             entries.forEach(e => { if (e.isIntersecting) { initCharts(); impactObs.disconnect(); }});
         });
         const impactEl = document.getElementById('impact-section');
         if(impactEl) impactObs.observe(impactEl);
 
-        // --- Cal.com ---
+        // --- Cal.com (Asignado a TODOS los botones con la clase .cal-trigger) ---
         (function (C, A, L) {
             let p = function (a, ar) { a.q.push(ar); };
             let d = C.document;
@@ -579,8 +653,12 @@
         Cal("init", "cal30", { origin: "https://cal.com" });
         Cal.ns["cal30"]("ui", { styles: { branding: { brandColor: "#0f172a" } }, hideEventTypeDetails: false });
 
-        document.getElementById('open-cal-30')?.addEventListener('click', () => {
-            Cal.ns["cal30"]("modal", { calLink: `maba-agency/30min`, config: { layout: "month_view" } });
+        // Enganchar todos los botones con la clase 'cal-trigger' para que abran el calendario
+        document.querySelectorAll('.cal-trigger').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                Cal.ns["cal30"]("modal", { calLink: `maba-agency/30min`, config: { layout: "month_view" } });
+            });
         });
     </script>
 </body>
