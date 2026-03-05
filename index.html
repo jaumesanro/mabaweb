@@ -266,9 +266,60 @@
                 </div>
             </div>
         </div>
-    </section>
 
-    <section id="section-services" class="page-section pt-24 sm:pt-32 pb-24">
+        <div class="max-w-6xl mx-auto px-6 py-24 sm:py-32">
+            <div class="text-center mb-16 fade-up">
+                <h2 class="text-3xl sm:text-5xl font-black tracking-tightest mb-6">Nuestro proceso.</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto text-lg">Un flujo de trabajo claro, probado y sin sorpresas. Pasamos de la idea a la ejecución en 4 pasos.</p>
+            </div>
+
+            <div class="relative grid md:grid-cols-4 gap-6">
+                <div class="hidden md:block absolute top-12 left-[12%] right-[12%] h-px bg-slate-200 -z-10"></div>
+
+                <div class="bg-white fade-up" style="transition-delay: 0s;">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-light border border-brand-border flex items-center justify-center font-black text-xl text-brand-dark mx-auto md:mx-0 mb-6 shadow-sm">
+                        01
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="font-bold text-lg mb-2 text-brand-dark">Análisis Gratuito</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">Estudiamos tu negocio y competencia en una videollamada inicial de 30 minutos, sin ningún tipo de compromiso.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white fade-up" style="transition-delay: 0.1s;">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-light border border-brand-border flex items-center justify-center font-black text-xl text-brand-dark mx-auto md:mx-0 mb-6 shadow-sm">
+                        02
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="font-bold text-lg mb-2 text-brand-dark">Propuesta y Diseño</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">Te enviamos una estructura visual y un presupuesto cerrado. Si estás de acuerdo, comenzamos con el diseño UI/UX.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white fade-up" style="transition-delay: 0.2s;">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-light border border-brand-border flex items-center justify-center font-black text-xl text-brand-dark mx-auto md:mx-0 mb-6 shadow-sm">
+                        03
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="font-bold text-lg mb-2 text-brand-dark">Desarrollo Web</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">Programamos tu página asegurando máxima velocidad, adaptabilidad móvil e integración SEO básica.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white fade-up" style="transition-delay: 0.3s;">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-primary flex items-center justify-center font-black text-xl text-white mx-auto md:mx-0 mb-6 shadow-lg shadow-brand-primary/30">
+                        04
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="font-bold text-lg mb-2 text-brand-dark">Lanzamiento</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">Publicamos tu web. Te acompañamos con soporte y métricas para asegurar que se convierte en tu mejor herramienta de ventas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </section>
+
+    <section id="section-services" class="page-section pt-24 sm:pt-32 pb-24 bg-brand-light">
         <div class="max-w-6xl mx-auto px-6">
             <div class="text-center mb-20 fade-up">
                 <h2 class="text-3xl sm:text-5xl font-black tracking-tightest mb-6">Inversión transparente.</h2>
@@ -554,7 +605,7 @@
         const impactEl = document.getElementById('impact-section');
         if(impactEl) impactObs.observe(impactEl);
 
-        // --- Cal.com (Funcionalidad base mantenida) ---
+        // --- Cal.com ---
         (function (C, A, L) {
             let p = function (a, ar) { a.q.push(ar); };
             let d = C.document;
