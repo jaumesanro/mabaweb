@@ -38,6 +38,7 @@
                         'apple': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
                         'apple-hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
                         'glow': '0 0 40px -10px rgba(79, 70, 229, 0.5)',
+                        'pill': '0 8px 32px rgba(15, 23, 42, 0.08)', /* Sombra para el menú flotante */
                     }
                 }
             }
@@ -59,6 +60,27 @@
         /* ─── Navigation Tabs ───────────────────────────────────── */
         .page-section { display: none; }
         .page-section.active { display: block; }
+
+        /* Estilo del texto del menú */
+        .nav-link {
+            position: relative;
+            padding-bottom: 2px;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #4f46e5;
+            transform: scaleX(0);
+            transform-origin: center;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
+        .nav-link.active { color: #0f172a; font-weight: 600; }
 
         /* ─── Buttons & Magnetism ───────────────────────────────── */
         .btn-primary {
@@ -151,7 +173,7 @@
             bottom: 24px;
             right: 24px;
             z-index: 999;
-            transform: translateY(100px); /* Hidden initially */
+            transform: translateY(100px);
             opacity: 0;
             transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
         }
@@ -181,19 +203,22 @@
 <body>
     <div class="grain-overlay"></div>
 
-    <header id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm" style="opacity:0; transform:translateY(-20px);">
-        <div class="max-w-6xl mx-auto px-6 sm:px-10 flex items-center justify-between h-16 sm:h-20">
-            <button onclick="navigateTo('home')" class="text-xl font-black tracking-tighter">
+    <header id="navbar" class="fixed top-6 left-0 right-0 z-50 flex justify-center pointer-events-none" style="opacity:0; transform:translateY(-20px);">
+        <div class="pointer-events-auto bg-white/70 backdrop-blur-xl border border-slate-200/60 shadow-pill rounded-full px-4 py-2 flex items-center gap-6 sm:gap-10 transition-all duration-300">
+            
+            <button onclick="navigateAndScroll('home', 'top')" class="text-xl font-black tracking-tighter pl-2">
                 MABA<span class="text-brand-primary">.</span>
             </button>
 
-            <nav class="hidden sm:flex items-center gap-10">
-                <button onclick="navigateTo('home')" class="text-sm font-medium text-slate-600 hover:text-brand-dark transition-colors">Inicio</button>
-                <button onclick="navigateTo('services')" class="text-sm font-medium text-slate-600 hover:text-brand-dark transition-colors">Servicios</button>
+            <nav class="hidden md:flex items-center gap-8">
+                <button onclick="navigateAndScroll('home', 'top')" class="nav-link active text-sm font-medium text-slate-500 hover:text-brand-dark" data-tab="home">Inicio</button>
+                <button onclick="navigateAndScroll('home', 'impact-section')" class="nav-link text-sm font-medium text-slate-500 hover:text-brand-dark" data-tab="home">Resultados</button>
+                <button onclick="navigateAndScroll('home', 'process-section')" class="nav-link text-sm font-medium text-slate-500 hover:text-brand-dark" data-tab="home">Proceso</button>
+                <button onclick="navigateAndScroll('services', 'top')" class="nav-link text-sm font-medium text-slate-500 hover:text-brand-dark" data-tab="services">Tarifas</button>
             </nav>
 
-            <button class="cal-trigger btn-primary btn-magnetic text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-full">
-                <span>Agendar llamada</span>
+            <button class="cal-trigger btn-primary btn-magnetic text-xs sm:text-sm font-semibold px-6 py-2.5 rounded-full">
+                <span>Agendar</span>
             </button>
         </div>
     </header>
@@ -203,9 +228,9 @@
         <span>Agenda tu cita</span>
     </button>
 
-    <section id="section-home" class="page-section active pt-24 sm:pt-32">
+    <section id="section-home" class="page-section active pt-32 sm:pt-40">
         
-        <div class="relative min-h-[85vh] flex items-center justify-center pt-10 pb-20 overflow-hidden">
+        <div id="top" class="relative min-h-[85vh] flex items-center justify-center pb-20 overflow-hidden">
             <div class="blob-container">
                 <div class="blob blob-1"></div>
                 <div class="blob blob-2"></div>
@@ -232,7 +257,7 @@
                     <button class="cal-trigger btn-primary btn-magnetic w-full sm:w-auto text-sm font-semibold px-8 py-4 rounded-full">
                         <span>Hablemos de tu proyecto →</span>
                     </button>
-                    <button onclick="navigateTo('services')" class="btn-magnetic w-full sm:w-auto text-sm font-semibold px-8 py-4 rounded-full border border-slate-300 text-brand-dark bg-white/50 backdrop-blur-sm hover:bg-white transition-colors">
+                    <button onclick="navigateAndScroll('services', 'top')" class="btn-magnetic w-full sm:w-auto text-sm font-semibold px-8 py-4 rounded-full border border-slate-300 text-brand-dark bg-white/50 backdrop-blur-sm hover:bg-white transition-colors">
                         <span>Ver servicios</span>
                     </button>
                 </div>
@@ -332,7 +357,7 @@
                 </div>
             </div>
         </div>
-        <div class="max-w-6xl mx-auto px-6 py-24 sm:py-32 bg-white">
+        <div id="process-section" class="max-w-6xl mx-auto px-6 py-24 sm:py-32 bg-white">
             <div class="text-center mb-16 fade-up">
                 <span class="text-brand-primary font-bold tracking-wider uppercase text-xs mb-4 block">Metodología</span>
                 <h2 class="text-3xl sm:text-5xl font-black tracking-tightest mb-6 text-brand-darker">Lanzamiento en 4 pasos.</h2>
@@ -342,36 +367,28 @@
                 <div class="hidden md:block absolute top-8 left-[10%] right-[10%] h-px bg-slate-200 -z-10"></div>
 
                 <div class="fade-up relative group">
-                    <div class="w-16 h-16 rounded-2xl bg-white border-2 border-slate-200 flex items-center justify-center font-black text-xl text-brand-dark mx-auto mb-6 group-hover:border-brand-primary transition-colors">
-                        1
-                    </div>
+                    <div class="w-16 h-16 rounded-2xl bg-white border-2 border-slate-200 flex items-center justify-center font-black text-xl text-brand-dark mx-auto mb-6 group-hover:border-brand-primary transition-colors">1</div>
                     <div class="text-center">
                         <h3 class="font-bold text-lg mb-2">Videollamada</h3>
                         <p class="text-sm text-slate-500">Nos cuentas tu negocio y objetivos. Totalmente gratis.</p>
                     </div>
                 </div>
                 <div class="fade-up relative group" style="transition-delay: 0.1s;">
-                    <div class="w-16 h-16 rounded-2xl bg-white border-2 border-slate-200 flex items-center justify-center font-black text-xl text-brand-dark mx-auto mb-6 group-hover:border-brand-primary transition-colors">
-                        2
-                    </div>
+                    <div class="w-16 h-16 rounded-2xl bg-white border-2 border-slate-200 flex items-center justify-center font-black text-xl text-brand-dark mx-auto mb-6 group-hover:border-brand-primary transition-colors">2</div>
                     <div class="text-center">
                         <h3 class="font-bold text-lg mb-2">Propuesta</h3>
                         <p class="text-sm text-slate-500">Recibes un diseño visual previo y presupuesto cerrado.</p>
                     </div>
                 </div>
                 <div class="fade-up relative group" style="transition-delay: 0.2s;">
-                    <div class="w-16 h-16 rounded-2xl bg-white border-2 border-slate-200 flex items-center justify-center font-black text-xl text-brand-dark mx-auto mb-6 group-hover:border-brand-primary transition-colors">
-                        3
-                    </div>
+                    <div class="w-16 h-16 rounded-2xl bg-white border-2 border-slate-200 flex items-center justify-center font-black text-xl text-brand-dark mx-auto mb-6 group-hover:border-brand-primary transition-colors">3</div>
                     <div class="text-center">
                         <h3 class="font-bold text-lg mb-2">Desarrollo</h3>
                         <p class="text-sm text-slate-500">Programamos tu web optimizada para Google y móviles.</p>
                     </div>
                 </div>
                 <div class="fade-up relative group" style="transition-delay: 0.3s;">
-                    <div class="w-16 h-16 rounded-2xl bg-brand-primary text-white shadow-glow flex items-center justify-center font-black text-xl mx-auto mb-6 transition-transform group-hover:scale-110">
-                        4
-                    </div>
+                    <div class="w-16 h-16 rounded-2xl bg-brand-primary text-white shadow-glow flex items-center justify-center font-black text-xl mx-auto mb-6 transition-transform group-hover:scale-110">4</div>
                     <div class="text-center">
                         <h3 class="font-bold text-lg mb-2">Lanzamiento</h3>
                         <p class="text-sm text-slate-500">Publicamos y empezamos a medir resultados de inmediato.</p>
@@ -383,9 +400,8 @@
         <div class="max-w-5xl mx-auto px-6 pb-24 fade-up">
             <div class="bg-gradient-to-r from-brand-primary to-indigo-800 rounded-3xl p-10 sm:p-14 text-center text-white shadow-2xl relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
-                
                 <h2 class="text-3xl sm:text-4xl font-black mb-4 relative z-10">Deja de perder clientes por internet.</h2>
-                <p class="text-indigo-100 mb-8 max-w-xl mx-auto text-lg relative z-10">Reserva una llamada con nuestro equipo. Analizaremos tu situación actual y te daremos un plan de acción sin coste.</p>
+                <p class="text-indigo-100 mb-8 max-w-xl mx-auto text-lg relative z-10">Reserva 30 minutos con nuestro equipo. Analizaremos tu situación actual y te daremos un plan de acción sin coste.</p>
                 <button class="cal-trigger btn-magnetic bg-white text-brand-primary font-bold px-8 py-4 rounded-full shadow-lg hover:scale-105 transition-transform relative z-10">
                     <span>Agendar diagnóstico gratuito</span>
                 </button>
@@ -394,7 +410,7 @@
 
     </section>
 
-    <section id="section-services" class="page-section pt-24 sm:pt-32 pb-24 bg-slate-50">
+    <section id="section-services" class="page-section pt-32 pb-24 bg-slate-50">
         <div class="max-w-6xl mx-auto px-6">
             <div class="text-center mb-20 fade-up">
                 <span class="text-brand-primary font-bold tracking-wider uppercase text-xs mb-4 block">Tarifas</span>
@@ -406,7 +422,7 @@
                 <div class="premium-card p-8 flex flex-col fade-up">
                     <h3 class="text-xl font-bold text-brand-dark mb-2">Nueva Web</h3>
                     <p class="text-sm text-slate-500 mb-6">Presencia profesional desde cero.</p>
-                    <p class="text-4xl font-black tracking-tightest text-brand-dark mb-8">790€ <span class="text-base font-normal text-slate-400">único</span></p>
+                    <p class="text-4xl font-black tracking-tightest text-brand-dark mb-8">890€ <span class="text-base font-normal text-slate-400">único</span></p>
                     <ul class="space-y-4 mb-8 flex-1">
                         <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary font-bold">✓</span> Diseño UI/UX a medida</li>
                         <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary font-bold">✓</span> Optimizado para móvil</li>
@@ -419,9 +435,9 @@
                     <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
                         <span class="bg-brand-primary text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wide shadow-glow">Más demandado</span>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-2">Rediseño Web</h3>
+                    <h3 class="text-xl font-bold text-white mb-2">Rediseño Pro</h3>
                     <p class="text-sm text-slate-400 mb-6">Multiplica las conversiones de tu web actual.</p>
-                    <p class="text-4xl font-black tracking-tightest text-white mb-8">390€ <span class="text-base font-normal text-slate-500">único</span></p>
+                    <p class="text-4xl font-black tracking-tightest text-white mb-8">590€ <span class="text-base font-normal text-slate-500">único</span></p>
                     <ul class="space-y-4 mb-8 flex-1">
                         <li class="flex items-start gap-3 text-slate-300 text-sm"><span class="text-brand-primary font-bold">✓</span> Modernización visual completa</li>
                         <li class="flex items-start gap-3 text-slate-300 text-sm"><span class="text-brand-primary font-bold">✓</span> Mejora radical de velocidad</li>
@@ -433,7 +449,7 @@
                 <div class="premium-card p-8 flex flex-col fade-up">
                     <h3 class="text-xl font-bold text-brand-dark mb-2">Mantenimiento</h3>
                     <p class="text-sm text-slate-500 mb-6">Olvídate de la parte técnica.</p>
-                    <p class="text-4xl font-black tracking-tightest text-brand-dark mb-8">49€ <span class="text-base font-normal text-slate-400">/mes</span></p>
+                    <p class="text-4xl font-black tracking-tightest text-brand-dark mb-8">59€ <span class="text-base font-normal text-slate-400">/mes</span></p>
                     <ul class="space-y-4 mb-8 flex-1">
                         <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary font-bold">✓</span> Hosting ultrarrápido</li>
                         <li class="flex items-start gap-3 text-slate-600 text-sm"><span class="text-brand-primary font-bold">✓</span> Cambios de texto/fotos ilimitados</li>
@@ -456,7 +472,7 @@
                 </div>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <button class="cal-trigger btn-magnetic bg-brand-primary text-white font-bold px-8 py-4 rounded-full shadow-glow">
-                        <span>📅 Agendar llamada</span>
+                        <span>📅 Agendar en Cal.com</span>
                     </button>
                     <a href="mailto:mabaagencyy@gmail.com" class="btn-magnetic bg-white/10 text-white font-bold px-8 py-4 rounded-full border border-white/20 hover:bg-white/20 transition-colors flex items-center justify-center">
                         <span>✉️ Enviar Email</span>
@@ -474,36 +490,59 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // --- Navegación SPA ---
-        function navigateTo(tabId) {
-            const current = document.querySelector('.page-section.active');
-            if (current && current.id === `section-${tabId}`) return;
+        // --- Nueva lógica de navegación (Pestañas + Scroll automático) ---
+        function navigateAndScroll(tabId, sectionId) {
+            const currentTab = document.querySelector('.page-section.active');
+            
+            // Función auxiliar para hacer el scroll suave
+            const doScroll = () => {
+                if (sectionId === 'top') {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    const el = document.getElementById(sectionId);
+                    if (el) {
+                        // Restamos 100px para que el menú flotante no tape el título
+                        const y = el.getBoundingClientRect().top + window.scrollY - 100;
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                    }
+                }
+            };
 
-            if (current) {
-                gsap.to(current, {
+            // Si ya estamos en la pestaña correcta, solo hacemos scroll
+            if (currentTab && currentTab.id === `section-${tabId}`) {
+                doScroll();
+            } else {
+                // Si cambiamos de pestaña, ocultamos la actual, mostramos la nueva y luego hacemos scroll
+                gsap.to(currentTab, {
                     opacity: 0, y: -20, duration: 0.3, ease: 'power3.in',
                     onComplete: () => {
-                        current.classList.remove('active');
-                        showTab(tabId);
+                        currentTab.classList.remove('active');
+                        const target = document.getElementById(`section-${tabId}`);
+                        if (target) {
+                            target.classList.add('active');
+                            gsap.fromTo(target, 
+                                { opacity: 0, y: 30 }, 
+                                { opacity: 1, y: 0, duration: 0.6, ease: 'power4.out',
+                                  onComplete: () => {
+                                      ScrollTrigger.refresh();
+                                      if(tabId === 'home') initCharts();
+                                      doScroll(); // Scroll al terminar la transición
+                                  }
+                                }
+                            );
+                        }
                     }
                 });
-            } else {
-                showTab(tabId);
             }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
 
-        function showTab(tabId) {
-            const target = document.getElementById(`section-${tabId}`);
-            if (!target) return;
-            target.classList.add('active');
-
-            gsap.fromTo(target, 
-                { opacity: 0, y: 30 }, 
-                { opacity: 1, y: 0, duration: 0.6, ease: 'power4.out' }
-            );
-            ScrollTrigger.refresh();
-            if(tabId === 'home') initCharts();
+            // Actualizar botones del menú (estética)
+            document.querySelectorAll('.nav-link').forEach(btn => {
+                if (btn.dataset.tab === tabId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
         }
 
         // --- Animaciones GSAP Base ---
@@ -526,22 +565,32 @@
             });
         });
 
+        // --- Efecto "Píldora Responsiva" en Scroll ---
+        window.addEventListener('scroll', () => {
+            const navbarInner = document.querySelector('#navbar > div');
+            if (window.scrollY > 50) {
+                // Se hace un poco más estrecho y denso al hacer scroll
+                navbarInner.classList.replace('py-2', 'py-1.5');
+                navbarInner.classList.replace('px-4', 'px-6');
+                navbarInner.style.backgroundColor = 'rgba(255,255,255,0.85)';
+            } else {
+                navbarInner.classList.replace('py-1.5', 'py-2');
+                navbarInner.classList.replace('px-6', 'px-4');
+                navbarInner.style.backgroundColor = 'rgba(255,255,255,0.7)';
+            }
+        });
+
         // --- Botones Magnéticos (Interacción Premium) ---
         const magneticButtons = document.querySelectorAll('.btn-magnetic');
         magneticButtons.forEach(btn => {
             const text = btn.querySelector('span');
-            
             btn.addEventListener('mousemove', (e) => {
                 const rect = btn.getBoundingClientRect();
                 const x = e.clientX - rect.left - rect.width / 2;
                 const y = e.clientY - rect.top - rect.height / 2;
-                
-                // Mueve el botón sutilmente
                 gsap.to(btn, { x: x * 0.3, y: y * 0.3, duration: 0.4, ease: "power2.out" });
-                // Mueve el texto un poco más para efecto parallax interior
                 if(text) gsap.to(text, { x: x * 0.2, y: y * 0.2, duration: 0.4, ease: "power2.out" });
             });
-
             btn.addEventListener('mouseleave', () => {
                 gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.3)" });
                 if(text) gsap.to(text, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.3)" });
@@ -575,7 +624,6 @@
             Chart.defaults.font.family = "'Inter', sans-serif";
             Chart.defaults.color = '#94a3b8';
 
-            // Gráfico Barras
             new Chart(barCtx, {
                 type: 'bar',
                 data: {
@@ -595,7 +643,6 @@
                 }
             });
 
-            // Gráfico Líneas
             const gradient = lineCtx.getContext('2d').createLinearGradient(0, 0, 0, 250);
             gradient.addColorStop(0, 'rgba(79, 70, 229, 0.4)');
             gradient.addColorStop(1, 'rgba(79, 70, 229, 0)');
@@ -627,7 +674,7 @@
         const impactEl = document.getElementById('impact-section');
         if(impactEl) impactObs.observe(impactEl);
 
-        // --- Cal.com (Asignado a TODOS los botones con la clase .cal-trigger) ---
+        // --- Cal.com ---
         (function (C, A, L) {
             let p = function (a, ar) { a.q.push(ar); };
             let d = C.document;
@@ -653,7 +700,6 @@
         Cal("init", "cal30", { origin: "https://cal.com" });
         Cal.ns["cal30"]("ui", { styles: { branding: { brandColor: "#0f172a" } }, hideEventTypeDetails: false });
 
-        // Enganchar todos los botones con la clase 'cal-trigger' para que abran el calendario
         document.querySelectorAll('.cal-trigger').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
